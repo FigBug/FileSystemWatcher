@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="DVboLc" name="FileSystemWatcherDemo" displaySplashScreen="0"
+<JUCERPROJECT id="DVboLc" name="FileSystemWatcherDemo" displaySplashScreen="1"
               reportAppUsage="1" splashScreenColour="Dark" projectType="guiapp"
               version="1.0.0" bundleIdentifier="com.yourcompany.FileSystemWatcherDemo"
               includeBinaryInAppConfig="1" cppLanguageStandard="14" companyCopyright=""
               jucerVersion="5.2.0">
   <MAINGROUP id="IHa9aw" name="FileSystemWatcherDemo">
     <GROUP id="{489F6383-C553-4877-1A6E-78E0275AA9D7}" name="Source">
+      <FILE id="On0uLS" name="FileSystemWatcher.mm" compile="1" resource="0"
+            file="../FileSystemWatcher/FileSystemWatcher.mm"/>
       <FILE id="co8vF2" name="FileSystemWatcher.cpp" compile="1" resource="0"
             file="../FileSystemWatcher/FileSystemWatcher.cpp"/>
       <FILE id="zcXbI1" name="FileSystemWatcher.h" compile="0" resource="0"

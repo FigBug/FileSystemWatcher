@@ -10,17 +10,18 @@
 
 #include "FileSystemWatcher.h"
 
-FileSystemWatcher::FileSystemWatcher()
+void FileSystemWatcher::addListener (Listener* newListener)
 {
-    
+    listeners.add (newListener);
 }
 
-void FileSystemWatcher::addFolder (const File& folder)
+void FileSystemWatcher::removeListener (Listener* listener)
 {
-    
+    listeners.remove (listener);
 }
 
-void FileSystemWatcher::removeFolder (const File& folder)
+void FileSystemWatcher::folderChanged (const File& folder)
 {
-    
+    listeners.call ([folder] (Listener& l) { l.folderChanged (folder); });
 }
+

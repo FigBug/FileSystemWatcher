@@ -12,6 +12,16 @@
 //==============================================================================
 MainContentComponent::MainContentComponent()
 {
+    addAndMakeVisible (text);
+    
+    text.setMultiLine (true);
+    
+    File f = File::getSpecialLocation (File::userDesktopDirectory);
+    watcher.addFolder (f);
+    watcher.addListener (this);
+    
+    folderChanged (f);
+    
     setSize (600, 400);
 }
 
@@ -21,17 +31,23 @@ MainContentComponent::~MainContentComponent()
 
 void MainContentComponent::paint (Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
-
-    g.setFont (Font (16.0f));
-    g.setColour (Colours::white);
-    g.drawText ("Hello World!", getLocalBounds(), Justification::centred, true);
 }
 
 void MainContentComponent::resized()
 {
-    // This is called when the MainContentComponent is resized.
-    // If you add any child components, this is where you should
-    // update their positions.
+    text.setBounds (getLocalBounds());
+}
+
+void MainContentComponent::folderChanged (File f)
+{
+    Array<File> files;
+    f.findChildFiles (files, File::findFiles, false);
+    
+    text.clear();
+    
+    String txt;
+    for (auto f : files)
+        txt += f.getFileName() + "\n";
+    
+    text.setText (txt);
 }
