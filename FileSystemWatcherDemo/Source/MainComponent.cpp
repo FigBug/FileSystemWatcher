@@ -29,7 +29,7 @@ MainContentComponent::~MainContentComponent()
 {
 }
 
-void MainContentComponent::paint (Graphics& g)
+void MainContentComponent::paint (Graphics&)
 {
 }
 
@@ -46,8 +46,8 @@ void MainContentComponent::folderChanged (File f)
     text.clear();
     
     String txt;
-    for (auto f : files)
-        txt += f.getFileName() + "\n";
+    for (auto ff : files)
+        txt += ff.getFileName() + "\n";
     
     text.setText (txt);
 }
