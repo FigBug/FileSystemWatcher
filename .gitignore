@@ -34,3 +34,9 @@
 *.ipch
 *.opendb
 *.ilk
+
+FileSystemWatcherDemo/Builds/CodeBlocksLinux/FileSystemWatcherDemo.depend
+FileSystemWatcherDemo/Builds/CodeBlocksLinux/FileSystemWatcherDemo.layout
+FileSystemWatcherDemo/Builds/CodeBlocksLinux/bin/
+
+

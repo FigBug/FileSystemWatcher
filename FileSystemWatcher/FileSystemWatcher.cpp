@@ -10,16 +10,101 @@
 
 #ifdef  _WIN32
 #include <Windows.h>
-#endif 
+#endif
+#ifdef __linux__
+#include <sys/inotify.h>
+#include <limits.h>
+#include <unistd.h>
+#endif
 
 #include "FileSystemWatcher.h"
+
+#ifdef __linux__
+#define BUF_LEN (10 * (sizeof(struct inotify_event) + NAME_MAX + 1))
+
+class FileSystemWatcher::Impl : public Thread,
+                                private AsyncUpdater
+{
+public:
+    Impl (FileSystemWatcher& o, File f)
+      : Thread ("FileSystemWatcher::Impl"), owner (o), folder (f)
+    {
+        fd = inotify_init();
+
+        wd = inotify_add_watch (fd, folder.getFullPathName().toRawUTF8(), IN_ALL_EVENTS);
+
+        startThread();
+    }
+
+    ~Impl()
+    {
+        inotify_rm_watch (fd, wd);
+        close (fd);
+
+        stopThread (1000);
+    }
+
+    void run() override
+    {
+        char buf[BUF_LEN];
+
+        while (true)
+        {
+            int numRead = read (fd, buf, BUF_LEN);
+
+            if (numRead == -1 || threadShouldExit())
+                break;
+
+            triggerAsyncUpdate();
+        }
+    }
+
+    void handleAsyncUpdate() override
+    {
+        owner.folderChanged (folder);
+    }
+
+    FileSystemWatcher& owner;
+    File folder;
+
+    int fd;
+    int wd;
+
+};
+
+FileSystemWatcher::FileSystemWatcher()
+{
+}
+
+FileSystemWatcher::~FileSystemWatcher()
+{
+}
+
+void FileSystemWatcher::addFolder (const File& folder)
+{
+    watched.add (new Impl (*this, folder));
+}
+
+void FileSystemWatcher::removeFolder (const File& folder)
+{
+    for (int i = 0; --i >= 0;)
+    {
+        if (watched[i]->folder == folder)
+        {
+            watched.remove (i);
+            break;
+        }
+    }
+}
+
+#endif
 
 #ifdef _WIN32
 class FileSystemWatcher::Impl : public Thread,
                                 private AsyncUpdater
 {
 public:
-    Impl (FileSystemWatcher& o, File f) 
+    Impl (FileSystemWatcher& o, File f)
       : Thread ("FileSystemWatcher::Impl"), owner (o), folder (f)
     {
         WCHAR path[_MAX_PATH] = {0};
@@ -29,7 +114,7 @@ public:
                                                    FILE_NOTIFY_CHANGE_SIZE | FILE_NOTIFY_CHANGE_LAST_WRITE);
 
         handleExit = CreateEvent (NULL, FALSE, FALSE, NULL);
-        
+
         startThread();
     }
 
@@ -50,7 +135,7 @@ public:
         {
             HANDLE handles[] = { handleFile, handleExit };
             DWORD res = WaitForMultipleObjects (2, handles, FALSE, INFINITE);
-            
+
             if (threadShouldExit())
                 break;
 
