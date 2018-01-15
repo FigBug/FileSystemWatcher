@@ -12,7 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class FileSystemWatcher : public ChangeBroadcaster
+class FileSystemWatcher
 {
 public:
     FileSystemWatcher();
