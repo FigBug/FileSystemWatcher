@@ -41,8 +41,8 @@ public:
         if (stream)
         {
             FSEventStreamStop (stream);
-            FSEventStreamUnscheduleFromRunLoop(stream, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-            CFRelease(stream);
+            FSEventStreamInvalidate (stream);
+            FSEventStreamRelease (stream);
         }
     }
     
